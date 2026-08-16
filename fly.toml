@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for vestaboard-pinball on 2026-07-24T14:46:16-04:00
+# fly.toml app configuration file generated for gamenightgrillers on 2026-08-16T14:25:47Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -7,6 +7,7 @@ app = 'gamenightgrillers'
 primary_region = 'iad'
 
 [build]
+
 [http_service]
   internal_port = 80
   force_https = true
