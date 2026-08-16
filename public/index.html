@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Night Grillers | Competition BBQ Team</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --fire-red: #c0392b;
+      --fire-orange: #e67e22;
+      --fire-amber: #f39c12;
+      --smoke-dark: #1a1a1a;
+      --smoke-mid: #2c2c2c;
+      --smoke-light: #3d3d3d;
+      --cream: #f5f0e8;
+      --gold: #d4a017;
+      --gold-light: #f1c40f;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background-color: var(--smoke-dark);
+      color: var(--cream);
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(192, 57, 43, 0.45) 0%, transparent 70%),
+        radial-gradient(ellipse at 30% 80%, rgba(230, 126, 34, 0.3) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(243, 156, 18, 0.2) 0%, transparent 60%),
+        linear-gradient(180deg, #0d0d0d 0%, #1a1009 60%, #2b1200 100%);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(255,255,255,0.015) 2px,
+          rgba(255,255,255,0.015) 4px
+        );
+      pointer-events: none;
+    }
+
+    .flame-row {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 2.5rem;
+      animation: flicker 2.4s ease-in-out infinite alternate;
+    }
+
+    @keyframes flicker {
+      0%   { transform: scaleY(1)   translateY(0);    filter: brightness(1); }
+      25%  { transform: scaleY(1.04) translateY(-2px); filter: brightness(1.1); }
+      50%  { transform: scaleY(0.97) translateY(1px);  filter: brightness(0.95); }
+      75%  { transform: scaleY(1.06) translateY(-3px); filter: brightness(1.15); }
+      100% { transform: scaleY(1)   translateY(0);    filter: brightness(1); }
+    }
+
+    .hero-eyebrow {
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--fire-orange);
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 9vw, 7rem);
+      font-weight: 900;
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 10%, var(--fire-amber) 50%, var(--fire-orange) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 3vw, 1.6rem);
+      font-style: italic;
+      color: rgba(245, 240, 232, 0.7);
+      margin-bottom: 2.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.2rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .badge-gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: #1a1200;
+      box-shadow: 0 0 20px rgba(212, 160, 23, 0.5);
+    }
+
+    .badge-outline {
+      border: 2px solid var(--fire-orange);
+      color: var(--fire-orange);
+    }
+
+    .hero-location {
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      color: rgba(245, 240, 232, 0.45);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      color: rgba(245, 240, 232, 0.3);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .scroll-hint svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Courier New', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--fire-orange);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+    }
+
+    .divider {
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--fire-red), var(--fire-amber));
+      border-radius: 2px;
+      margin-bottom: 2rem;
+    }
+
+    /* ── ABOUT ── */
+    .about {
+      background: var(--smoke-mid);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    @media (max-width: 680px) {
+      .about-grid { grid-template-columns: 1fr; }
+    }
+
+    .about-text p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: rgba(245, 240, 232, 0.82);
+      margin-bottom: 1.2rem;
+    }
+
+    .about-text p:last-child { margin-bottom: 0; }
+
+    .pit-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pit-icon {
+      font-size: 9rem;
+      line-height: 1;
+      filter: drop-shadow(0 0 40px rgba(230, 126, 34, 0.6));
+      animation: glow-pulse 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow-pulse {
+      from { filter: drop-shadow(0 0 25px rgba(230, 126, 34, 0.4)); }
+      to   { filter: drop-shadow(0 0 55px rgba(192, 57, 43, 0.8)); }
+    }
+
+    /* ── CHAMPIONSHIP ── */
+    .championship {
+      background: linear-gradient(180deg, var(--smoke-dark) 0%, #1a0d00 100%);
+      text-align: center;
+    }
+
+    .trophy-block {
+      margin: 3rem auto;
+      max-width: 520px;
+      background: linear-gradient(135deg, rgba(212, 160, 23, 0.12), rgba(241, 196, 15, 0.06));
+      border: 1px solid rgba(212, 160, 23, 0.35);
+      border-radius: 1.5rem;
+      padding: 3rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .trophy-block::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(212, 160, 23, 0.18), transparent 70%);
+      pointer-events: none;
+    }
+
+    .trophy-icon {
+      font-size: 5rem;
+      display: block;
+      margin-bottom: 1rem;
+      animation: trophy-shine 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes trophy-shine {
+      from { filter: drop-shadow(0 0 10px rgba(212, 160, 23, 0.4)); }
+      to   { filter: drop-shadow(0 0 30px rgba(241, 196, 15, 0.9)); }
+    }
+
+    .trophy-year {
+      font-size: clamp(3.5rem, 10vw, 6rem);
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light), #fff, var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .trophy-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gold-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .trophy-desc {
+      font-size: 0.9rem;
+      color: rgba(245, 240, 232, 0.55);
+      letter-spacing: 0.05em;
+    }
+
+    .champ-tagline {
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      font-style: italic;
+      color: rgba(245, 240, 232, 0.65);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .champ-tagline strong {
+      color: var(--fire-amber);
+      font-style: normal;
+    }
+
+    /* ── WHAT WE DO ── */
+    .craft {
+      background: var(--smoke-mid);
+    }
+
+    .craft-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .craft-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 1rem;
+      padding: 2rem 1.5rem;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .craft-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(230, 126, 34, 0.4);
+      box-shadow: 0 12px 40px rgba(230, 126, 34, 0.12);
+    }
+
+    .craft-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .craft-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.6rem;
+      color: var(--fire-amber);
+    }
+
+    .craft-card p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: rgba(245, 240, 232, 0.65);
+    }
+
+    /* ── PERENNIAL ── */
+    .perennial {
+      background: var(--smoke-dark);
+      text-align: center;
+    }
+
+    .perennial-quote {
+      max-width: 700px;
+      margin: 0 auto 3rem;
+    }
+
+    .perennial-quote blockquote {
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--cream);
+      position: relative;
+      padding: 0 2rem;
+    }
+
+    .perennial-quote blockquote::before,
+    .perennial-quote blockquote::after {
+      content: '"';
+      font-size: 5rem;
+      color: var(--fire-red);
+      line-height: 0;
+      vertical-align: -0.45em;
+      font-style: normal;
+      opacity: 0.5;
+    }
+
+    .perennial-quote blockquote::after {
+      content: '"';
+    }
+
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 3rem;
+    }
+
+    .stat-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 1rem;
+      padding: 1.75rem 2.5rem;
+      min-width: 160px;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--fire-orange), var(--fire-amber));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(245, 240, 232, 0.45);
+      margin-top: 0.25rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0d0d0d;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-size: 1.6rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: linear-gradient(135deg, var(--fire-orange), var(--fire-amber));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-location {
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      color: rgba(245, 240, 232, 0.3);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: rgba(245, 240, 232, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="flame-row" aria-hidden="true">
+      &#x1F525;&#x1F525;&#x1F525;&#x1F525;&#x1F525;
+    </div>
+    <p class="hero-eyebrow">Competition BBQ Team</p>
+    <h1 class="hero-title">Game Night<br>Grillers</h1>
+    <p class="hero-subtitle">Low &amp; slow. All the way to the top.</p>
+    <div class="badge-row">
+      <span class="badge badge-gold">&#x1F3C6; 2025 Grand Master Champions</span>
+      <span class="badge badge-outline">Perennial Championship Contender</span>
+    </div>
+    <p class="hero-location">&#x1F4CD; Streetsboro, Ohio</p>
+    <div class="scroll-hint" aria-hidden="true">
+      <span>Scroll</span>
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <p class="section-label">Who We Are</p>
+          <h2 class="section-title">Fire, Smoke &amp; Heart</h2>
+          <div class="divider"></div>
+          <p>
+            Born and raised in Streetsboro, Ohio, Game Night Grillers started
+            as a backyard crew that took competition BBQ way too seriously &mdash;
+            and we have zero regrets. What began over dice and dominoes evolved
+            into a championship-caliber pit team that shows up ready to compete
+            every single time.
+          </p>
+          <p>
+            We believe great barbecue isn't luck. It's obsession. Every rub is
+            dialed in, every fire is managed by hand, and every cut of meat earns
+            its place on the plate. We bring the same intensity to the pit that
+            we bring to game night.
+          </p>
+        </div>
+        <div class="pit-visual">
+          <div class="pit-icon" aria-hidden="true">&#x1F356;</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAMPIONSHIP -->
+  <section class="championship" id="championship">
+    <div class="container">
+      <p class="section-label">Our Crowning Achievement</p>
+      <h2 class="section-title">Grand Master<br>Champions</h2>
+      <div class="divider" style="margin: 0 auto 2rem;"></div>
+
+      <div class="trophy-block">
+        <span class="trophy-icon" aria-hidden="true">&#x1F3C6;</span>
+        <div class="trophy-year">2025</div>
+        <div class="trophy-title">Grand Master Champion</div>
+        <div class="trophy-desc">Competition BBQ &mdash; Streetsboro, Ohio</div>
+      </div>
+
+      <p class="champ-tagline">
+        It wasn't a surprise &mdash; it was <strong>inevitable</strong>.
+        Years of competition, countless hours at the pit, and an unrelenting
+        drive to be the best finally crowned us Grand Master in 2025.
+      </p>
+    </div>
+  </section>
+
+  <!-- CRAFT -->
+  <section class="craft" id="craft">
+    <div class="container">
+      <p class="section-label">What We Do</p>
+      <h2 class="section-title">The Craft</h2>
+      <div class="divider"></div>
+      <div class="craft-grid">
+        <div class="craft-card">
+          <span class="craft-icon" aria-hidden="true">&#x1F969;</span>
+          <h3>Brisket</h3>
+          <p>12-hour smoked packer briskets with a bark so dark and rich it speaks for itself. Fork-tender, competition-ready.</p>
+        </div>
+        <div class="craft-card">
+          <span class="craft-icon" aria-hidden="true">&#x1F321;&#xFE0F;</span>
+          <h3>Ribs</h3>
+          <p>Spare ribs and St. Louis cuts fall-off-the-bone in all the right ways, kissed with a proprietary rub and finished to perfection.</p>
+        </div>
+        <div class="craft-card">
+          <span class="craft-icon" aria-hidden="true">&#x1F357;</span>
+          <h3>Chicken</h3>
+          <p>Competition chicken thighs with bite-through skin and a glaze that judges remember &mdash; scored and sauced exactly right.</p>
+        </div>
+        <div class="craft-card">
+          <span class="craft-icon" aria-hidden="true">&#x1F4A8;</span>
+          <h3>The Smoke</h3>
+          <p>Cherry, hickory, and apple wood, blended to build a smoke ring and flavor profile that puts us in a league of our own.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERENNIAL CONTENDER -->
+  <section class="perennial" id="legacy">
+    <div class="container">
+      <p class="section-label">Our Legacy</p>
+      <h2 class="section-title">Perennial<br>Contenders</h2>
+      <div class="divider" style="margin: 0 auto 2rem;"></div>
+
+      <div class="perennial-quote">
+        <blockquote>
+          Perennial Championship Contender
+        </blockquote>
+      </div>
+
+      <p class="champ-tagline">
+        We don't show up hoping for a good day &mdash; we show up <strong>expecting to win</strong>.
+        Season after season, Game Night Grillers is a name that judges know,
+        competitors respect, and fans watch closely.
+      </p>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-number">1</div>
+          <div class="stat-label">Grand Master Title</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">#1</div>
+          <div class="stat-label">Streetsboro's Best</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">&#x221E;</div>
+          <div class="stat-label">Passion for BBQ</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Game Night Grillers</div>
+    <div class="footer-location">&#x1F4CD; Streetsboro, Ohio</div>
+    <div class="footer-copy">&copy; 2025 Game Night Grillers &mdash; All Rights Reserved</div>
+  </footer>
+
+</body>
+</html>
